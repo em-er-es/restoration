@@ -1,0 +1,43 @@
+digraph flowchart {
+	compound=true;
+	graph [color="black"];
+
+	start [label="   Start   ", shape="ellipse"];
+	end [label="    End    ", shape="ellipse"];
+
+	subgraph cluster_imb {
+		graph [label="Restoration", color="black"];
+		input [label="Input", shape="diamond"];
+		output [label="Output", shape="diamond"];
+		
+		extract_frames [label="Extract frames", shape="box", style="dashed", color="green"];
+		recreate_video [label="Recreate video", shape="box", style="dashed", color="blue"];
+
+		extract_frames -> manual_edit_filter;
+		manual_edit_filter -> apply_filter;
+		apply_filter -> recreate_video;
+		recreate_video -> output;
+		recreate_video -> stabilize [style="dashed"];
+		stabilize -> output;
+		stabilize -> reflow [style="dashed"];
+		reflow -> output;
+
+		subgraph cluster_images {
+			graph [label="Process images", shape="box"];
+			manual_edit_filter [label="Manually edit each segment", shape="box", style="dashed", color="red"];
+			apply_filter [label="Apply filter", shape="box", style="dashed", color="purple"];
+		}
+
+		subgraph cluster_video {
+			graph [label="Process video", shape="box"];
+			stabilize [label="Stabilize video", shape="box", style="dashed", color="orange"];
+			reflow [label="Reflow", shape="box", style="dashed", color="darkgreen"];
+		}
+	}
+
+	start -> input;
+	input -> extract_frames;
+	output -> end;
+	{rank=same; start; input}
+	{rank=same; end; output}
+}
